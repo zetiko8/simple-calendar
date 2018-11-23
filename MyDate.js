@@ -112,6 +112,7 @@ function validateMonth(month) {
 
 function validateDay(day, month, year) {
     try {
+        if(day < 1) throw Error()
         if (day <= getDaysOfMonth(month, year)) return true
         else throw Error()
     } catch (error) {
