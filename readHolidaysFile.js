@@ -1,8 +1,7 @@
 const fs = require('fs')
 
 const resourcesPath = process.resourcesPath
-// const path = resourcesPath + '/app/holidays.txt'
-const path = './holidays.txt'
+const path = resourcesPath + '/app/holidays.txt'
 
 function convertASCII(file) {
     let holidays = []
@@ -19,6 +18,7 @@ function convertASCII(file) {
     for (let i = 0; i < file.length + 1; i++) {
         if (file.charCodeAt(i) !== 10) {
             if (file.charCodeAt(i) === 13 || i === file.length) {
+
                 holidays.push(holiday)
                 holiday = {
                     day: undefined,

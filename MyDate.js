@@ -1,6 +1,6 @@
 const _und = require('underscore')
 
-const startYear = 1990
+const startYear = 1934
 const months31 = [0, 2, 4, 6, 7, 9, 11]
 const months30 = [3, 5, 8, 10]
 
