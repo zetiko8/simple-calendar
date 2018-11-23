@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>Simple Calendar</title>
+</head>
+
+<body>
+    <div id="app" class="container">
+
+        <!-- Inputs -->
+        <div style="float: left;">
+            <div class="select-row">
+                <select class="input" v-model="selectedMonth" @change="changedMY()">
+                    <option v-for="(monthLabel, index) in monthLabels" :key="index + 'monthLabel'" :value="index">
+                        {{ monthLabel }}
+                    </option>
+                </select>
+                <input class="input" v-model="selectedYear" @change="changedMY()">
+                <input class="input" type="text" v-model="selectedDate" @change="changedD()">
+
+            </div>
+            <!-- /Inputs -->
+
+            <!-- Calendar -->
+            <div class="calendar-row">
+                <div class="day label" v-for="(dayLabel, index) in weekDaysLabels" :key="index + 'weekLabel'">
+                    {{ dayLabel }}
+                </div>
+            </div>
+            <div class="calendar-row" v-for="(week, index) in weeks" :key="index + 'week'">
+                <div class="day" v-for="(day, index) in week" :key="index + 'weekDay'">
+                    <div class="inner-day" :class="{ grey : (day.month !== date.month), holiday : day.isHoliday }">
+                        {{ day.dayNumber }}
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- /Calendar -->
+
+        <!-- Errors -->
+        <div class="error" v-for="(error, index) in errors" :key="index + 'error'">
+            {{ error }}
+        </div>
+        <!-- /Errors -->
+    </div>
+
+</body>
+
+</html>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.5.17/vue.common.js"></script>
+<script>
+
+    
+    var MyDate = require('./MyDate')
+    const Day = require('./Day')
+    const startDate = new MyDate(1, 0, 2018)
+
+
+    var arr = [1, 2, 3, 4]
+
+    var app = new Vue({
+        el: '#app',
+        data: {
+            date: startDate,
+            selectedMonth: startDate.month,
+            selectedYear: startDate.year,
+            selectedDate: startDate.toString(),
+            errors: [],
+            weekDaysLabels: [
+                'Pon',
+                'Tor',
+                'Sre',
+                'Čet',
+                'Pet',
+                'Sob',
+                'Ned'
+            ],
+            monthLabels: [
+                'Januar',
+                'Februar',
+                'Marec',
+                'April',
+                'Maj',
+                'Junij',
+                'Julij',
+                'Avgust',
+                'September',
+                'Oktober',
+                'November',
+                'December',
+            ]
+        },
+        computed: {
+            weeks() {
+                let weeks = []
+                let week = []
+                for (let i = 0; i < 42; i++) {
+
+                    week.push(new Day(i, this.date, i % 7))
+
+
+                    if ((i + 1) % 7 === 0) {
+                        weeks.push(week)
+                        week = []
+                    }
+                }
+
+                return weeks
+            }
+        },
+        methods: {
+            changedMY() {
+                this.$nextTick(() => {
+                    this.changeDate(MyDate.inString(this.date.day, this.selectedMonth, this.selectedYear))
+                });
+            },
+            changedD() {
+                this.$nextTick(() => {
+                    this.changeDate(this.selectedDate)
+                })
+            },
+            changeDate(dateString) {
+                try {
+                    this.date = new MyDate(dateString)
+                    this.selectedMonth = this.date.month
+                    this.selectedYear = this.date.year
+                    this.selectedDate = this.date.toString()
+                    this.errors = []
+                } catch (error) {
+                    this.errors = error
+                }
+            }
+        },
+    })
+
+</script>
+
+<style>
+    .container {
+        box-sizing: border-box;
+        font-family: "Comic Sans MS", cursive, sans-serif;
+        padding: 3%;
+    }
+
+    .calendar-row {
+        display: flex;
+        width: 700px;
+    }
+
+    .select-row {
+        display: flex;
+        width: 700px;
+        padding: 10px;
+        background-color: aquamarine;
+    }
+
+    .day {
+        width: 14.28%;
+        padding: 10px;
+    }
+
+    .inner-day {
+        padding: 5px;
+        width: 80%;
+    }
+
+    .input {
+        text-align: center;
+        margin: 10px;
+        font-family: "Comic Sans MS", cursive, sans-serif;
+        border-radius: 5px;
+    }
+
+    .label {
+        border-bottom: black solid 1px;
+    }
+
+    .grey {
+        color: rgb(180, 179, 179);
+    }
+
+    .holiday {
+        border-bottom: 1px red solid;
+        border-left: 1px red solid;
+    }
+
+    .error {
+        margin-left: 30px;
+        margin-top: 50px;
+        padding: 10px;
+        background-color: orange;
+        border-radius: 10px;
+        float: left;
+    }
+</style>
